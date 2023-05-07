@@ -227,7 +227,7 @@ The Gptx chat process goes through a series of steps, with hooks being executed 
 
 The following diagram illustrates the chat process with hooks incorporated.
 
-![hooks-diagram](https://user-images.githubusercontent.com/761462/236603840-91bb060a-2d70-417a-8e60-fb3b9c12425e.svg)
+![hooks-diagram](https://user-images.githubusercontent.com/761462/236674975-1d0eab37-8a6a-4904-a853-acf8d2e90636.svg)
 
 As you can see in the diagram, there are various points at which hooks are executed: `pre-message`, `post-message`, and `finish`.
 These execution points are called [Types of hooks](#types-of-hooks).
