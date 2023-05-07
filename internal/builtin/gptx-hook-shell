@@ -1,0 +1,97 @@
+#!/usr/bin/env bash
+
+#/ This is a hook program for gptx. These are not meant to be executed directly.
+#/ see https://github.com/kohkimakimoto/gptx#hooks for more details.
+set -e -o pipefail
+
+function print_help() {
+  local filepath="${BASH_SOURCE[0]}"
+  grep '^#/' <"$filepath" | cut -c4-
+}
+
+function prompt_action() {
+  while true; do
+    read -r -p "Choose an action: Run (r), Copy to clipboard (c), or Nothing (n): " choice
+    case $choice in
+        [Rr]|[Rr][Uu][Nn] ) return 0;;
+        [Cc]|[Cc][Oo][Pp][Yy] ) return 1;;
+        [Nn]|[Nn][Oo][Tt][Hh][Ii][Nn][Gg] ) return 2;;
+        * ) echo "Please choose a valid action.";;
+    esac
+  done
+}
+
+case "$GPTX_HOOK_TYPE" in
+  'pre-message')
+    # pre-message hook is called before requesting a message to ChatGPT.
+    prompt=$(cat "$GPTX_PROMPT_FILE")
+    if [[ "$GPTX_MESSAGE_INDEX" -eq 0 ]]; then
+      # The first message in the conversation.
+
+      platform=$(uname)
+      shell=$(basename "$SHELL")
+
+      # The prompt is inspired by https://github.com/TheR1D/shell_gpt
+      # shell_gpt is licensed under the MIT License
+      # Copyright (c) 2023 Farkhod Sadykov
+      # See also: https://github.com/TheR1D/shell_gpt
+      cat << EOF > "$GPTX_PROMPT_FILE"
+Provide only ${shell} commands for ${platform} without any description.
+If there is a lack of details, provide most logical solution.
+Ensure the output is a valid shell command.
+If multiple steps required try to combine them together.
+
+${prompt}
+
+Command:
+EOF
+    else
+      # The second or later message in the conversation.
+      cat << EOF > "$GPTX_PROMPT_FILE"
+${prompt}
+
+Command:
+EOF
+    fi
+    exit 0
+    ;;
+
+  'post-message')
+    # Nothing to do.
+    exit 0
+    ;;
+
+  'finish')
+    prompt_action &&:
+    choice=$?
+    case $choice in
+      0)
+        # run
+        bash -c "$(cat $GPTX_COMPLETION_FILE)"
+        exit 0
+        ;;
+      1)
+        # copy
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+          pbcopy < "$GPTX_COMPLETION_FILE"
+        elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+          xclip -selection clipboard < "$GPTX_COMPLETION_FILE"
+        fi
+        exit 0
+        ;;
+      2)
+        # nothing
+        exit 0
+        ;;
+      *)
+        echo "invalid action: $choice" >&2
+        exit 1
+        ;;
+    esac
+    ;;
+
+  *)
+    print_help
+    exit 1
+    ;;
+esac

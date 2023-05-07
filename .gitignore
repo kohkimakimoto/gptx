@@ -1,0 +1,18 @@
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+node_modules/
+
+# dev
+/.dev
+
+# .gptx home for development
+/.gptx
+
+# doenv, direnv
+.env
+.envrc
+
+!.gitkeep
+

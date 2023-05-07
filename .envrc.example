@@ -1,0 +1,4 @@
+# for development environment
+export PATH=$(pwd)/.dev/build/dev:$PATH
+export GPTX_HOME=$(pwd)/.gptx
+export OPENAI_API_KEY=sk-***
