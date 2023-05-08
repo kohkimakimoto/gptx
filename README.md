@@ -44,7 +44,7 @@ go install github.com/kohkimakimoto/gptx/cmd/gptx@latest
 After installing, you can run `gptx init` command to initialize the configuration.
 
 ```sh
-$ gptx init
+gptx init
 ```
 
 This command creates a directory `~/.gptx`. It has a configuration file `config.toml`.
