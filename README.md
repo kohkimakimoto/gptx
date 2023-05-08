@@ -27,6 +27,12 @@ Gptx is a single binary command line program. You can download a precompiled bin
 
 [Download the latest version](https://github.com/kohkimakimoto/gptx/releases/latest)
 
+### Homebrew
+
+```sh
+brew install kohkimakimoto/gptx/gptx 
+```
+
 ### From source
 
 ```sh
